@@ -2,7 +2,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.orm import sessionmaker
 
-from api.src.config import DB_URL
+from src.config import DB_URL
 
 
 class Base(DeclarativeBase):
@@ -10,7 +10,6 @@ class Base(DeclarativeBase):
 
 
 engine = create_engine(DB_URL)
-
 Session = sessionmaker(engine)
 
 
