@@ -1,8 +1,9 @@
-import uuid
+from typing import Optional
+from uuid import UUID
 
-from sqlalchemy import ForeignKey, LargeBinary, Table, Column, BINARY
+import sqlalchemy
+from sqlalchemy import ForeignKey, Table, Column
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy.types import BINARY
 
 from src.db.database import Base
 
@@ -26,29 +27,29 @@ userRole_table = Table(
 class DbUser(Base):
     __tablename__ = 'users'
     __table_args__ = {'extend_existing': True}
-    id: Mapped[uuid.UUID] = mapped_column(primary_key=True)
+    id: Mapped[UUID] = mapped_column(primary_key=True, server_default=sqlalchemy.text("uuid_generate_v4()"))
     username: Mapped[str]
-    displayName: Mapped[str]
+    displayName: Mapped[Optional[str]]
     certificates: Mapped[list['DbCertificate']] = relationship(back_populates='user')
     groups: Mapped[list['DbGroup']] = relationship(secondary=userGroup_table, back_populates='users')
-    roles: Mapped[list['DbRole']] = relationship(secondary=userGroup_table, back_populates='users')
+    roles: Mapped[list['DbRole']] = relationship(secondary=userRole_table, back_populates='users')
 
 
 class DbCertificate(Base):
     __tablename__ = 'certificates'
     __table_args__ = {'extend_existing': True}
-    id: Mapped[uuid.UUID] = mapped_column(primary_key=True)
+    id: Mapped[UUID] = mapped_column(primary_key=True)
     publicKey: Mapped[str]
     token: Mapped[str]
     transportKey: Mapped[bytes]
-    user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey('users.id'))
+    user_id: Mapped[UUID] = mapped_column(ForeignKey('users.id'))
     user: Mapped['DbUser'] = relationship(back_populates='certificates')
 
 
 class DbGroup(Base):
     __tablename__ = 'groups'
     __table_args__ = {'extend_existing': True}
-    id: Mapped[uuid.UUID] = mapped_column(primary_key=True)
+    id: Mapped[UUID] = mapped_column(primary_key=True)
     name: Mapped[str]
     description: Mapped[str]
     users: Mapped[list['DbUser']] = relationship(secondary=userGroup_table, back_populates='groups')
@@ -57,7 +58,7 @@ class DbGroup(Base):
 class DbRole(Base):
     __tablename__ = 'roles'
     __table_args__ = {'extend_existing': True}
-    id: Mapped[uuid.UUID] = mapped_column(primary_key=True)
+    id: Mapped[UUID] = mapped_column(primary_key=True)
     name: Mapped[str]
     description: Mapped[str]
-    users: Mapped[list['DbUser']] = relationship(secondary=userGroup_table, back_populates='roles')
+    users: Mapped[list['DbUser']] = relationship(secondary=userRole_table, back_populates='roles')
