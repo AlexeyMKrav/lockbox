@@ -26,8 +26,7 @@ userRole_table = Table(
 
 class DbUser(Base):
     __tablename__ = 'users'
-    __table_args__ = {'extend_existing': True}
-    id: Mapped[UUID] = mapped_column(primary_key=True, server_default=sqlalchemy.text("uuid_generate_v4()"))
+    id: Mapped[UUID] = mapped_column(primary_key=True)
     username: Mapped[str]
     displayName: Mapped[Optional[str]]
     certificates: Mapped[list['DbCertificate']] = relationship(back_populates='user')
@@ -37,18 +36,16 @@ class DbUser(Base):
 
 class DbCertificate(Base):
     __tablename__ = 'certificates'
-    __table_args__ = {'extend_existing': True}
     id: Mapped[UUID] = mapped_column(primary_key=True)
     publicKey: Mapped[str]
-    token: Mapped[str]
-    transportKey: Mapped[bytes]
+    token: Mapped[Optional[str]]
+    transportKey: Mapped[Optional[bytes]]
     user_id: Mapped[UUID] = mapped_column(ForeignKey('users.id'))
     user: Mapped['DbUser'] = relationship(back_populates='certificates')
 
 
 class DbGroup(Base):
     __tablename__ = 'groups'
-    __table_args__ = {'extend_existing': True}
     id: Mapped[UUID] = mapped_column(primary_key=True)
     name: Mapped[str]
     description: Mapped[str]
@@ -57,7 +54,6 @@ class DbGroup(Base):
 
 class DbRole(Base):
     __tablename__ = 'roles'
-    __table_args__ = {'extend_existing': True}
     id: Mapped[UUID] = mapped_column(primary_key=True)
     name: Mapped[str]
     description: Mapped[str]

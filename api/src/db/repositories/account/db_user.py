@@ -1,3 +1,4 @@
+import uuid
 from uuid import UUID
 from sqlalchemy.orm.session import Session
 
@@ -5,8 +6,9 @@ from src.db.models.account import DbUser
 from src.routers.account_administrator.schemas import UserBase
 
 
-def create(db: Session, request: UserBase):
+def create(db: Session, request: UserBase) -> DbUser:
     user = DbUser(
+        id=uuid.uuid4(),
         username=request.username,
         displayName=request.displayName,
     )
@@ -16,15 +18,16 @@ def create(db: Session, request: UserBase):
     return user
 
 
-def get(db: Session, id: UUID):
+def get(db: Session, id: UUID) -> DbUser:
     return db.query(DbUser).filter(DbUser.id == id).first()
 
 
-def get_all(db: Session):
-    return db.query(DbUser).all()
+def get_all(db: Session) -> list[DbUser]:
+    users = db.query(DbUser).all()
+    return users
 
 
-def update(db: Session, id: UUID, request: UserBase):
+def update(db: Session, id: UUID, request: UserBase) -> DbUser:
     user_query = db.query(DbUser).filter(DbUser.id == id)
     user_query.update({
         'username': request.username,
@@ -34,7 +37,7 @@ def update(db: Session, id: UUID, request: UserBase):
     return user_query.first()
 
 
-def delete(db: Session, id: UUID):
+def delete(db: Session, id: UUID) -> DbUser:
     user = db.query(DbUser).filter(DbUser.id == id).first()
     db.delete(user)
     db.commit()

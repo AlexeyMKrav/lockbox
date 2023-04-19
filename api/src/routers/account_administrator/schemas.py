@@ -1,8 +1,31 @@
-from pydantic import BaseModel
+from uuid import UUID
+
+from pydantic import BaseModel, Field
 
 
 class UserBase(BaseModel):
     username: str
     displayName: str
 
-# class UserDisplay
+
+class UserDisplay(BaseModel):
+    id: UUID
+    username: str
+    displayName: str | None = None
+
+    class Config:
+        orm_mode = True
+
+
+class CertificateBase(BaseModel):
+    publicKey: str
+    user: UserDisplay
+
+
+class CertificateDisplay(BaseModel):
+    id: UUID
+    publicKey: str
+    user: UserDisplay
+
+    class Config:
+        orm_mode = True
