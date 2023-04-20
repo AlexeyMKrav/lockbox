@@ -18,8 +18,11 @@ class UserDisplay(BaseModel):
 
 
 class CertificateBase(BaseModel):
+    id: UUID
     publicKey: str
-    user: UserDisplay
+
+    class Config:
+        orm_mode = True
 
 
 class CertificateDisplay(BaseModel):

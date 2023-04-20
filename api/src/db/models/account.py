@@ -1,7 +1,6 @@
 from typing import Optional
 from uuid import UUID
 
-import sqlalchemy
 from sqlalchemy import ForeignKey, Table, Column
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
