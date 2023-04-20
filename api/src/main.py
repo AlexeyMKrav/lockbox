@@ -1,11 +1,13 @@
 import uvicorn
-from fastapi import FastAPI, status
+from fastapi import FastAPI, status, Depends
 from fastapi.responses import HTMLResponse
 
-from src.db.models.account import Base, DbUser
+from src.auth.auth import get_current_user
 from src.db.database import engine
-from src.routers.common import auth
+from src.db.models.account import Base
 from src.routers.account_administrator import user, certificate
+from src.routers.account_administrator.schemas import UserDisplay
+from src.routers.common import auth
 
 app = FastAPI()
 
@@ -20,6 +22,11 @@ def root():
                         status.HTTP_200_OK,
                         media_type='text/html'
                         )
+
+
+@app.get('/whoami')
+def whoami(current_user: UserDisplay = Depends(get_current_user)):
+    return current_user
 
 
 # Base.metadata.drop_all(engine)

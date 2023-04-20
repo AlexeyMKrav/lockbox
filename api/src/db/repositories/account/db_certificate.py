@@ -20,7 +20,7 @@ def create(db: Session, request: CertificateBase):
     return certificate
 
 
-def get(db: Session, id: UUID):
+def get(db: Session, id: UUID) -> DbCertificate:
     return db.query(DbCertificate).filter(DbCertificate.id == id).first()
 
 
