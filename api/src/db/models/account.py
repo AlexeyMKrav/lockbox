@@ -1,10 +1,12 @@
 from typing import Optional
 from uuid import UUID
 
-from sqlalchemy import ForeignKey, Table, Column
+from sqlalchemy import ForeignKey, Table, Column, MetaData
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.db.database import Base
+
+metadata = MetaData()
 
 userGroup_table = Table(
     'user_group',
@@ -27,6 +29,7 @@ class DbUser(Base):
     __tablename__ = 'users'
     id: Mapped[UUID] = mapped_column(primary_key=True)
     username: Mapped[str]
+    password: Mapped[str]
     displayName: Mapped[Optional[str]]
     certificates: Mapped[list['DbCertificate']] = relationship(back_populates='user')
     groups: Mapped[list['DbGroup']] = relationship(secondary=userGroup_table, back_populates='users')

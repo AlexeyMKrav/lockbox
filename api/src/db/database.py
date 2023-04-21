@@ -10,7 +10,6 @@ class Base(DeclarativeBase):
 
 
 engine = create_engine(DB_URL)
-# engine.connect().execute('CREATE EXTENSION IF NOT EXISTS "uuid-ossp";')
 Session = sessionmaker(engine)
 
 

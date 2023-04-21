@@ -6,6 +6,7 @@ from pydantic import BaseModel, Field
 class UserBase(BaseModel):
     username: str
     displayName: str
+    password: str
 
 
 class UserDisplay(BaseModel):
