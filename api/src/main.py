@@ -4,17 +4,17 @@ import uvicorn
 from fastapi import FastAPI, status, Depends, Header, Form
 from fastapi.responses import HTMLResponse
 
-from src.authentication.auth import get_current_user
+from src.authentication.auth_handler import get_current_auth, AuthData, get_current_auth, get_current_user
 from src.db.database import engine
-from src.db.models.account import Base
+from src.db.models.account import Base, DbUser
 from src.db.repositories.account import db_certificate
 from src.routers.account_administrator import user, certificate
 from src.routers.account_administrator.schemas import UserDisplay
-from src.routers.common import auth
+from src.routers.common import authenticate
 
 app = FastAPI()
 
-app.include_router(auth.router)
+app.include_router(authenticate.router)
 app.include_router(user.router)
 app.include_router(certificate.router)
 
@@ -28,11 +28,17 @@ def root():
 
 
 @app.get('/whoami')
-def whoami(current_user: UserDisplay = Depends(get_current_user),
-           certificate_id: Annotated[str | None, Header()] = None):
+def whoami(user: DbUser = Depends(get_current_user)):
     return {
-        'user': current_user,
-        'certificate_id': certificate_id
+        'user': user,
+    }
+
+
+@app.get('/my_cert')
+def whoami(auth: AuthData = Depends(get_current_auth)):
+    return {
+        'user': auth.user,
+        'certificate_id': auth.certificate_id
     }
 
 

@@ -8,11 +8,11 @@ from src.db.models.account import DbCertificate
 from src.routers.account_administrator.schemas import CertificateBase
 
 
-def create(db: Session, request: CertificateBase):
+def create(db: Session, public_key: str, user_id):
     certificate = DbCertificate(
         id=uuid.uuid4(),
-        publicKey=request.publicKey,
-        user_id=request.user.id
+        publicKey=public_key,
+        user_id=user_id
     )
     db.add(certificate)
     db.commit()
